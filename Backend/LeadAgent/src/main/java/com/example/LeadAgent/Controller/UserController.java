@@ -94,7 +94,7 @@ public class UserController {
 		if (user != null && user.getRole().equalsIgnoreCase("Agent")) {
 			response.setStatus(true);
 			response.setMessage("Valid login");
-			response.setName(user.getName()); // To display name in the dashboard
+			response.setName(user.getFirstName()+ " " + user.getLastName()); // To display name in the dashboard
 			response.setId(user.getId()); // To get the leads assigned to this Id
 		} else if (user != null && !user.getRole().equalsIgnoreCase("Agent")) {
 			response.setStatus(false);
