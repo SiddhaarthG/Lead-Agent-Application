@@ -5,6 +5,7 @@ const LeadsTable = ({ agentId }) => {
   const [assignedLeads, setAssignedLeads] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState({});
   const [remarks, setRemarks] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     axios.get(`http://localhost:8088/leads/assigned-to/${agentId}`)
@@ -46,34 +47,68 @@ const LeadsTable = ({ agentId }) => {
     const updatedRemarks = remarks[leadId];
   
     const requestBody = {
-    status: updatedStatus,
-    notes: updatedRemarks,
+      status: updatedStatus,
+      notes: updatedRemarks,
+    };
+
+    axios.put(`http://localhost:8088/leads/update-status/${leadId}`, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log('Lead status updated successfully:', response.data);
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Error updating lead status:', error);
+      });
   };
 
-  axios.put(`http://localhost:8088/leads/update-status/${leadId}`, requestBody, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(response => {
-      console.log('Lead status updated successfully:', response.data);
-      window.location.reload();
-    })
-    .catch(error => {
-      console.error('Error updating lead status:', error);
-    });
-};
-  
+  const handleClear = (leadId) => {
+    setSelectedStatus(prevStatus => ({
+      ...prevStatus,
+      [leadId]: 'New',
+    }));
+    setRemarks(prevRemarks => ({
+      ...prevRemarks,
+      [leadId]: '',
+    }));
+  };
+
+  const filteredLeads = assignedLeads.filter(lead => {
+    const searchTerms = searchQuery.toLowerCase().split(' ');
+    const leadText = [
+      lead.firstName,
+      lead.lastName,
+      lead.email,
+      lead.mobile,
+      lead.status,
+    ].join(' ').toLowerCase();
+    
+    return searchTerms.every(term => leadText.includes(term));
+  });
 
   return (
     <div className="flex flex-col">
-      <br/>
+      <div className="sticky top-0 bg-white z-10">
+        <br/>
+        <div className="flex items-center space-x-4 mb-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="block w-full px-10 py-2 text-purple-700 bg-white border rounded-full focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            placeholder="Search..."
+          />
+        </div>
+      </div>
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <br></br>
+            <br />
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 sticky">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Lead Name
@@ -99,9 +134,9 @@ const LeadsTable = ({ agentId }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {assignedLeads.map(lead => (
+                {filteredLeads.map(lead => (
                   <tr key={lead.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{lead.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{lead.firstName + " " + lead.lastName}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{lead.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">{lead.mobile}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -130,7 +165,7 @@ const LeadsTable = ({ agentId }) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <input
                         type="text"
-                        placeholder="Add remarks"
+                        placeholder="Click here to add remarks"
                         value={remarks[lead.id] || ''}
                         onChange={event => handleRemarksChange(lead.id, event)}
                       />
@@ -138,9 +173,15 @@ const LeadsTable = ({ agentId }) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleUpdateStatus(lead.id)}
-                        className={`bg-green-600 text-white px-3 py-1 rounded`}
+                        className={`bg-green-600 text-white px-3 py-1 rounded mr-2`}
                       >
-                        Update Status
+                        Save
+                      </button>
+                      <button
+                        onClick={() => handleClear(lead.id)}
+                        className={`bg-gray-400 text-white px-3 py-1 rounded`}
+                      >
+                        Clear
                       </button>
                     </td>
                   </tr>
