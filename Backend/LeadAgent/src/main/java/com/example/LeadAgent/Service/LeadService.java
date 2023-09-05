@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.LeadAgent.Model.History;
@@ -30,12 +29,8 @@ public class LeadService {
 		this.leadRepository = leadRepository;
 	}
 
-	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
 	// Save a lead and create a history entry
 	public Lead saveLead(Lead lead) {
-		String hashedPassword = passwordEncoder.encode(lead.getPassword());
-		lead.setPassword(hashedPassword);
 		Lead id = leadRepository.save(lead);
 		String leadId = id.getId();
 		String leadName = lead.getFirstName() + " " + lead.getLastName();

@@ -12,28 +12,20 @@ public class Lead {
 	private String id;
 	private String firstName;
 	private String lastName;
-	private String mobile;
+	private long mobile;
 	private String email;
-	private String password;
 	private String assignedTo;
 	private String status;
 	private String notes;
 	private Date createdAt;
 	private Date updatedAt;
 
-	// Default constructor
-	public Lead() {
-		this.createdAt = new Date();
-		this.updatedAt = new Date();
-	}
-
 	// Constructor to initialize Lead object
-	public Lead(String firstName, String lastName, String mobile, String email, String password, String assignedTo, String status) {
+	public Lead(String firstName, String lastName, long mobile, String email, String assignedTo, String status) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mobile = mobile;
 		this.email = email;
-		this.password = password;
 		this.assignedTo = assignedTo;
 		this.status = status;
 		this.createdAt = new Date();
@@ -65,11 +57,11 @@ public class Lead {
 		this.lastName = lastName;
 	}
 
-	public String getMobile() {
+	public long getMobile() {
 		return mobile;
 	}
 
-	public void setMobile(String mobile) {
+	public void setMobile(long mobile) {
 		this.mobile = mobile;
 	}
 
@@ -79,14 +71,6 @@ public class Lead {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getAssignedTo() {

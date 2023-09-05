@@ -3,6 +3,9 @@ package com.example.LeadAgent.Model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Data;
+
+@Data
 @Document(collection = "users")
 public class User {
 
@@ -13,10 +16,10 @@ public class User {
 	private String email;
 	private String password;
 	private String role;
-	private String mobile;
+	private long mobile;
 
 	// Constructor to initialize User object
-	public User(String id, String firstName, String lastName, String email, String password, String role, String mobile) {
+	public User(String id, String firstName, String lastName, String email, String password, String role, long mobile) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -75,11 +78,11 @@ public class User {
 		this.role = role;
 	}
 
-	public String getMobile() {
+	public long getMobile() {
 		return mobile;
 	}
 
-	public void setMobile(String mobile) {
+	public void setMobile(long mobile) {
 		this.mobile = mobile;
 	}
 
